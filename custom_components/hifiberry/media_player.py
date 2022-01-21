@@ -215,11 +215,13 @@ class HifiberryMediaPlayer(MediaPlayerEntity):
 
     async def async_mute_volume(self, mute):
         """Mute. Emulated with set_volume_level."""
-        if mute:
-            self._muted_volume = self.volume_level * 100
-            await self._audiocontrol2.volume.set(0)
-        await self._audiocontrol2.volume.set(int(self._muted_volume))
-        self._muted = mute
+        if mute != self._muted:
+            if mute:
+                self._muted_volume = self.volume_level * 100
+                await self._audiocontrol2.volume.set(0)
+            else:
+                await self._audiocontrol2.volume.set(int(self._muted_volume))
+            self._muted = mute
 
     async def async_turn_off(self):
         return await self._audiocontrol2.poweroff()
